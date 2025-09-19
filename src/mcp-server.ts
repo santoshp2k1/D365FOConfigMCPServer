@@ -38,6 +38,18 @@ const createLegalEntitieSchema = z.object({
     legalEntityData: z.record(z.unknown()).describe("A JSON object for the new legal entity. Must include name, company, etc."),
 });
 
+const createFiscalCalendarSchema = z.object({
+    fiscalCalendarData: z.record(z.unknown()).describe("A JSON object for the new Fiscal calendar. Must include CalendardId, etc."),
+});
+
+const createFiscalCalendarYearSchema = z.object({
+    fiscalCalendarYearData: z.record(z.unknown()).describe("A JSON object for the new Fiscal calendar year. Must include FiscalCalendar_CalendardId, StartDate, EndDate,  etc."),
+});
+
+const createFiscalCalendarPeriodSchema = z.object({
+    fiscalCalendarPeriodData: z.record(z.unknown()).describe("A JSON object for the new Fiscal calendar period. Must include FiscalCalendarYear, Name, StartDate etc."),
+});
+
 const createCustomerSchema = z.object({
     customerData: z.record(z.unknown()).describe("A JSON object for the new customer. Must include dataAreaId, CustomerAccount, etc."),
 });
@@ -102,12 +114,45 @@ export const getServer = (): McpServer => {
         }
     );
 
-
+    server.tool(
+            'createFiscalCalendar',
+            'Creates a new Fiscal Calendar record ',
+            createFiscalCalendarSchema.shape,
+            async ({ fiscalCalendarData }: z.infer<typeof createFiscalCalendarSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+                const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/FiscalCalendarsEntity`;
+                return makeApiCall('POST', url, fiscalCalendarData as Record<string, unknown>, async (notification) => {
+                    await safeNotification(context, notification);
+                });
+            }
+        );
   
+    server.tool(
+            'createFiscalCalendarYear',
+            'Creates a new Fiscal Calendar Year record ',
+            createFiscalCalendarYearSchema.shape,
+            async ({ fiscalCalendarYearData }: z.infer<typeof createFiscalCalendarYearSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+                const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/FiscalCalendarYearsEntity`;
+                return makeApiCall('POST', url, fiscalCalendarYearData as Record<string, unknown>, async (notification) => {
+                    await safeNotification(context, notification);
+                });
+            }
+        );
 
-
+        server.tool(
+            'createFiscalCalendarPeriod',
+            'Creates a new Fiscal Calendar Period record ',
+            createFiscalCalendarPeriodSchema.shape,
+            async ({ fiscalCalendarPeriodData }: z.infer<typeof createFiscalCalendarPeriodSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+                const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/FiscalCalendarPeriodBiEntities`;
+                return makeApiCall('POST', url, fiscalCalendarPeriodData as Record<string, unknown>, async (notification) => {
+                    await safeNotification(context, notification);
+                });
+            }
+        );
+    
     return server;
 };
+
 
 
 
