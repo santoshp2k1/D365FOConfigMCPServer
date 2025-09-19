@@ -204,7 +204,9 @@ server.tool(
         return makeApiCall('POST', url, mainAccountData as Record<string, unknown>, async (notification) => {
             await safeNotification(context, notification);
         });
+
     }
+);
 
 
 server.tool(
@@ -256,9 +258,11 @@ server.tool(
             await safeNotification(context, notification);
         });
     }
+  );
     
     return server;
 };
+
 
 
 
