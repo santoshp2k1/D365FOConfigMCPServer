@@ -46,7 +46,7 @@ const createFiscalCalendarYearSchema = z.object({
     fiscalCalendarYearData: z.record(z.unknown()).describe("A JSON object for the new Fiscal calendar year. Must include FiscalCalendar_CalendardId, StartDate, EndDate,  etc."),
 });
 
-const createFiscalCalendarPeriodSchema = z.object({
+const createFiscalCalendarPeriodchema = z.object({
     fiscalCalendarPeriodData: z.record(z.unknown()).describe("A JSON object for the new Fiscal calendar period. Must include FiscalCalendarYear, Name, StartDate etc."),
 });
 
@@ -62,6 +62,37 @@ const createCustomerGroupSchema = z.object({
 const createVendorGroupSchema = z.object({
     vendorGroupData: z.record(z.unknown()).describe("A JSON object for the new customer group. Must include dataAreaId, vendor group id, etc."),
 });
+
+const createChartOfAccountsSchema = z.object({
+    chartOfAccountsData: z.record(z.unknown()).describe("A JSON object for the new Chart of Accounts. Must include  ChartOfAccountsId, etc."),
+});
+
+const createMainAccountSchema = z.object({
+    mainAccountData: z.record(z.unknown()).describe("A JSON object for the new Main Account. Must include Name, ChartOfAccounts, MainAccountId."),
+});
+
+
+const createCurrencySchema = z.object({
+    currencyData: z.record(z.unknown()).describe("A JSON object for the new Currency. Must include CurrencyCode."),
+});
+
+
+const createExchangeRateSchema = z.object({
+    exchangeRateData: z.record(z.unknown()).describe("A JSON object for the new Exchange Rate. Must include ExchangeRateForStorage."),
+});
+
+
+const createLedgerJournalNameSchema = z.object({
+    ledgerJournalNameData: z.record(z.unknown()).describe("A JSON object for the new Ledger Journal Name. Must include VoucherSeriesCode ,Name, dataAreaId "),
+});
+
+
+const createFinancialDimensionSchema = z.object({
+    financialDimensionData: z.record(z.unknown()).describe("A JSON object for the new Financial Dimension. Must include DimensionName."),
+});
+
+
+
 
 
 /**
@@ -141,14 +172,90 @@ export const getServer = (): McpServer => {
         server.tool(
             'createFiscalCalendarPeriod',
             'Creates a new Fiscal Calendar Period record ',
-            createFiscalCalendarPeriodSchema.shape,
-            async ({ fiscalCalendarPeriodData }: z.infer<typeof createFiscalCalendarPeriodSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+            createFiscalCalendarPeriodchema.shape,
+            async ({ fiscalCalendarPeriodData }: z.infer<typeof createFiscalCalendarPeriodchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
                 const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/FiscalCalendarPeriodBiEntities`;
                 return makeApiCall('POST', url, fiscalCalendarPeriodData as Record<string, unknown>, async (notification) => {
                     await safeNotification(context, notification);
                 });
             }
         );
+
+
+
+server.tool(
+    'createChartOfAccounts',
+    'Creates a new Chart of Accounts record in ChartOfAccounts.',
+    createChartOfAccountsSchema.shape,
+    async ({ chartOfAccountsData }: z.infer<typeof createChartOfAccountsSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/ChartOfAccounts`;
+        return makeApiCall('POST', url, chartOfAccountsData as Record<string, unknown>, async (notification) => {
+            await safeNotification(context, notification);
+        });
+    }
+);
+
+server.tool(
+    'createMainAccount',
+    'Creates a new Main Account record in MainAccounts.',
+    createMainAccountSchema.shape,
+    async ({ mainAccountData }: z.infer<typeof createMainAccountSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/MainAccounts`;
+        return makeApiCall('POST', url, mainAccountData as Record<string, unknown>, async (notification) => {
+            await safeNotification(context, notification);
+        });
+    }
+
+
+server.tool(
+    'createCurrency',
+    'Creates a new Currency record in Currencies.',
+    createCurrencySchema.shape,
+    async ({ currencyData }: z.infer<typeof createCurrencySchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/Currencies`;
+        return makeApiCall('POST', url, currencyData as Record<string, unknown>, async (notification) => {
+            await safeNotification(context, notification);
+        });
+    }
+);
+
+
+server.tool(
+    'createExchangeRate',
+    'Creates a new Exchange Rate record in ExchangeRates.',
+    createExchangeRateSchema.shape,
+    async ({ exchangeRateData }: z.infer<typeof createExchangeRateSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/ExchangeRates`;
+        return makeApiCall('POST', url, exchangeRateData as Record<string, unknown>, async (notification) => {
+            await safeNotification(context, notification);
+        });
+    }
+);
+
+
+server.tool(
+    'createLedgerJournalName',
+    'Creates a new Ledger Journal Name record in JournalNames.',
+    createLedgerJournalNameSchema.shape,
+    async ({ ledgerJournalNameData }: z.infer<typeof createLedgerJournalNameSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/JournalNames`;
+        return makeApiCall('POST', url, ledgerJournalNameData as Record<string, unknown>, async (notification) => {
+            await safeNotification(context, notification);
+        });
+    }
+);
+
+
+server.tool(
+    'createFinancialDimension',
+    'Creates a new Financial Dimension record in DimensionAttributes.',
+    createFinancialDimensionSchema.shape,
+    async ({ financialDimensionData }: z.infer<typeof createFinancialDimensionSchema>, context: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        const url = `${process.env.DYNAMICS_RESOURCE_URL}/data/DimensionAttributes`;
+        return makeApiCall('POST', url, financialDimensionData as Record<string, unknown>, async (notification) => {
+            await safeNotification(context, notification);
+        });
+    }
     
     return server;
 };
